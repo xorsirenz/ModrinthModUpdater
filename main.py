@@ -3,7 +3,7 @@ import requests
 import hashlib
 
 def main():
-    version = input('version: ')
+    version = input('mc version: ')
     path = os.path.expanduser('~/.minecraft/mods/')
     backup_path = os.path.expanduser('~/.minecraft/mods.bak/')
 
