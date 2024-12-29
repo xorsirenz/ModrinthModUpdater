@@ -4,8 +4,8 @@ import hashlib
 
 def main():
     version = input('mc version: ')
-    path = os.path.expanduser('~/.minecraft/mods/')
-    backup_path = os.path.expanduser('~/.minecraft/mods.bak/')
+    path = os.path.expanduser('mods/')
+    backup_path = os.path.expanduser(f'mods.bak/')
 
     if not os.path.exists(backup_path):
         print(f"creating {backup_path}")
@@ -20,7 +20,7 @@ def main():
 
             jar_file = os.path.join(backup_path, file)
             with open(jar_file, 'rb') as mod:
-                data=mod.read()
+                data = mod.read()
                 hashed_files = hashlib.sha1(data).hexdigest()
                 r = requests.post(
                     url = "https://api.modrinth.com/v2/version_files/update",
@@ -37,17 +37,20 @@ def main():
                     }
                 )
 
+
                 response = r.json()
-                for key, value in response.items():
-                    urls = value["files"][0]["url"]
-                    filename = value["files"][0]["filename"]
-                    print("[+] downloading: ", urls)
-                    r = requests.get(urls)
+                if not len(response) == 0:
+                    for key, value in response.items():
+                        urls = value["files"][0]["url"]
+                        filename = value["files"][0]["filename"]
+                        print("[+] downloading: ", urls)
+                        r = requests.get(urls)
 
-                    updated_mod = path + filename
-                    with open(updated_mod, 'wb') as file:
-                        file.write(r.content)
-
+                        updated_mod = path + filename
+                        with open(updated_mod, 'wb') as file:
+                            file.write(r.content)
+                else:
+                    print(f'[-] unable to download: {file}')
 
 if __name__ == '__main__':
     main()
